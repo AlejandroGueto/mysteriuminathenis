@@ -112,7 +112,7 @@
             <div class="mb-8 bg-slate-900/60 p-6 rounded border border-slate-600 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="text-left">
                     <p class="text-amber-400 font-cinzel text-md mb-1 flex items-center gap-2"><i data-lucide="key" class="w-4 h-4"></i> Oráculo (API Groq)</p>
-                    <p class="text-xs text-slate-400">Requerido para el análisis morfosintáctico y los retos (console.groq.com).</p>
+                    <p class="text-xs text-slate-400">Requerido para generar el reto magistral aleatorio (console.groq.com).</p>
                 </div>
                 <button onclick="promptForKey()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-cinzel rounded transition uppercase">Configurar Clavis</button>
             </div>
@@ -457,21 +457,61 @@
             c.innerHTML = "<p class='py-48 text-center animate-pulse font-cinzel text-amber-400 uppercase tracking-widest'>Consultando al Oráculo...</p>";
             
             const normalizedWord = word.toLowerCase();
-            // Umi ñe'ẽ ojejerureva'ekue iñesãmbyhy (Análisis morfosintáctico hardcoded para las palabras clave)
+            
+            // ==========================================
+            // DICCIONARIO MANUAL DE PALABRAS 
+            // ==========================================
+            // Aquí puedes editar el análisis de CUALQUIER palabra del texto
+            // sin depender de la Inteligencia Artificial.
             const customDict = {
+                'erat': { enunciado: "sum, esse, fui", es: { morph: "Verbo, 3ª persona singular, Pretérito Imperfecto Ind., Activo", syntax: "Cópula / Núcleo del predicado verbal", def: "era, estaba, había", etym: "Del PIE *h₁es- (ser, existir)"} },
+                'athenis': { enunciado: "Athenae, -arum, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Ablativo, Complemento Circunstancial de Lugar (Locativo)", def: "en Atenas", etym: "Relacionado con la diosa Atenea"} },
+                'magna': { enunciado: "magnus, -a, -um", es: { morph: "Adjetivo, Femenino, Singular", syntax: "Nominativo, Atributo o Adyacente de 'domus'", def: "grande", etym: "Del PIE *meǵh₂s (grande)"} },
+                'domus': { enunciado: "domus, -us, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Nominativo, Sujeto", def: "casa, mansión", etym: "Del PIE *dṓm (casa, techo)"} },
+                'sed': { enunciado: "sed", es: { morph: "Conjunción", syntax: "Conjunción coordinada adversativa", def: "pero, sino", etym: "Ablativo arcaico de se (sin, aparte)"} },
+                'infamis': { enunciado: "infamis, -e", es: { morph: "Adjetivo, Femenino, Singular", syntax: "Nominativo, Atributo", def: "de mala fama, infame", etym: "De in- (negación) + fama"} },
+                'per': { enunciado: "per", es: { morph: "Preposición", syntax: "Preposición que rige Acusativo", def: "por, durante, a través de", etym: "Del PIE *per- (a través de, adelante)"} },
+                'silentium': { enunciado: "silentium, -ii, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Acusativo, Complemento Circunstancial de Tiempo/Modo", def: "silencio", etym: "Del verbo silere (estar callado)"} },
+                'noctis': { enunciado: "nox, noctis, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Genitivo, Complemento del Nombre (de silentium)", def: "de la noche", etym: "Del PIE *nókʷts (noche)"} },
+                'sonus': { enunciado: "sonus, -i, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Sujeto", def: "sonido, ruido", etym: "Del PIE *swen- (sonar)"} },
+                'ferri': { enunciado: "ferrum, -i, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Genitivo, Complemento del Nombre (de sonus)", def: "del hierro", etym: "De origen oscuro, posiblemente préstamo fenicio o semítico"} },
+                'et': { enunciado: "et", es: { morph: "Conjunción", syntax: "Conjunción coordinada copulativa", def: "y", etym: "Del PIE *eti (y, además)"} },
+                'strepitus': { enunciado: "strepitus, -us, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Sujeto (coordinado con sonus)", def: "estrépito, estruendo", etym: "Del verbo strepere (hacer ruido)"} },
+                'vinculorum': { enunciado: "vinculum, -i, n", es: { morph: "Sustantivo, Neutro, Plural", syntax: "Genitivo, Complemento del Nombre (de strepitus)", def: "de las cadenas, de las ataduras", etym: "Del verbo vincire (atar)"} },
+                'audiebantur': { enunciado: "audio, -ire", es: { morph: "Verbo, 3ª persona plural, Pretérito Imperfecto Ind., Voz Pasiva", syntax: "Núcleo del predicado", def: "se oían, eran oídos", etym: "Del PIE *h₂ew- (percibir)", exp: "Está en 3ª persona del plural pasivo para concordar con los dos núcleos del sujeto ('sonus' y 'strepitus')."} },
+                'mox': { enunciado: "mox", es: { morph: "Adverbio", syntax: "Adverbio de Tiempo", def: "luego, pronto", etym: "Del latín arcaico *moks"} },
+                'apparebat': { enunciado: "appareo, -ere", es: { morph: "Verbo, 3ª persona singular, Pretérito Imperfecto Ind., Activo", syntax: "Núcleo del predicado", def: "aparecía", etym: "De ad- + pareo (mostrarse)"} },
+                'idolum': { enunciado: "idolum, -i, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Nominativo, Sujeto", def: "espectro, imagen, fantasma", etym: "Del griego εἴδωλον (eidōlon, imagen, fantasma)"} },
+                'senex': { enunciado: "senex, senis, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "anciano", etym: "Del PIE *sen- (viejo)", exp: "Se encuentra en aposición al sujeto 'idolum'. A su vez, es el núcleo modificado por el participio concertado 'confectus'."} },
+                'macie': { enunciado: "macies, -ei, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Ablativo, Complemento Agente o de Causa", def: "por la delgadez, por la consunción", etym: "De macer (delgado)"} },
+                'confectus': { enunciado: "confectus, -a, -um", es: { morph: "Participio de perfecto, pasivo, Masculino, Singular", syntax: "Participio Concertado", def: "consumido, deshecho", etym: "De conficere", exp: "Participio concertado que concuerda en género, número y caso (nominativo masculino singular) con 'senex'."} },
                 'cum': { enunciado: "cum", es: { morph: "Conjunción", syntax: "Cum histórico", def: "como, al...", etym: "Del PIE *kʷom", exp: "El 'cum histórico' o narrativo rige subjuntivo en tiempos del pasado (imperfecto o pluscuamperfecto). Sirve para enmarcar las circunstancias de la acción principal."} },
+                'philosophus': { enunciado: "philosophus, -i, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "el filósofo", etym: "Del griego φιλόσοφος (amante de la sabiduría)"} },
+                'athenodorus': { enunciado: "Athenodorus, -i, m", es: { morph: "Sustantivo propio, Masculino, Singular", syntax: "Nominativo, Sujeto", def: "Atenodoro", etym: "Del griego Ἀθηνόδωρος (don de Atenea)"} },
+                'domum': { enunciado: "domus, -us, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Acusativo, Complemento Directo", def: "la casa", etym: "Del PIE *dṓm (casa, techo)"} },
+                'conduxisset': { enunciado: "conduco, -ere", es: { morph: "Verbo, 3ª persona singular, Pluscuamperfecto de Subjuntivo, Activo", syntax: "Núcleo del predicado (Oración subordinada)", def: "hubiera alquilado", etym: "De con- + duco (llevar, reunir)"} },
+                'in': { enunciado: "in", es: { morph: "Preposición", syntax: "Preposición que rige ablativo", def: "en", etym: "Del PIE *en (en)"} },
+                'tenebris': { enunciado: "tenebrae, -arum, f", es: { morph: "Sustantivo, Femenino, Plural", syntax: "Ablativo, Complemento Circunstancial de Lugar", def: "en las tinieblas", etym: "Del PIE *temes- (oscuro)"} },
+                'vigilabat': { enunciado: "vigilo, -are", es: { morph: "Verbo, 3ª persona singular, Pretérito Imperfecto Ind., Activo", syntax: "Núcleo del predicado", def: "vigilaba, estaba despierto", etym: "De vigil (despierto)"} },
+                'subito': { enunciado: "subito", es: { morph: "Adverbio", syntax: "Adverbio de Tiempo", def: "de repente", etym: "Ablativo adverbializado de subitus (repentino)"} },
+                'phantasma': { enunciado: "phantasma, -atis, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Nominativo, Sujeto", def: "el fantasma, la aparición", etym: "Del griego φάντασμα (aparición, visión)"} },
+                'advenit': { enunciado: "advenio, -ire", es: { morph: "Verbo, 3ª persona singular, Pretérito Perfecto Ind., Activo", syntax: "Núcleo del predicado", def: "llegó, se presentó", etym: "De ad- + venio (venir hacia)"} },
+                'digito': { enunciado: "digitus, -i, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Ablativo, Complemento Instrumental", def: "con el dedo", etym: "Del PIE *deyǵ- (mostrar, apuntar)"} },
+                'signum': { enunciado: "signum, -i, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Acusativo, Complemento Directo", def: "una señal", etym: "Del PIE *sekʷ- (seguir)"} },
+                'dedit': { enunciado: "do, dare, dedi, datum", es: { morph: "Verbo, 3ª persona singular, Pretérito Perfecto Ind., Activo", syntax: "Núcleo del predicado", def: "dio", etym: "Del PIE *deh₃- (dar)"} },
+                'area': { enunciado: "area, -ae, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Ablativo, Complemento Circunstancial de Lugar", def: "en el patio, en la zona descubierta", etym: "Posiblemente del verbo arere (estar seco)"} },
                 'monstro': { enunciado: "monstrum, -i, n", es: { morph: "Sustantivo, Neutro, Singular", syntax: "Ablativo Absoluto", def: "monstruo, prodigio", etym: "Del latín monēre", exp: "Junto al participio 'evanescente' forma un ablativo absoluto: una construcción sintácticamente independiente que suele equivaler a una oración subordinada adverbial."} },
                 'evanescente': { enunciado: "evanescens, -entis", es: { morph: "Participio de presente, activo, Neutro, Singular", syntax: "Ablativo Absoluto", def: "al desaparecer, desvaneciéndose", etym: "De ex- + vanus", exp: "Participio en ablativo que concuerda con 'monstro' para formar la estructura de ablativo absoluto."} },
                 'ossa': { enunciado: "os, ossis, n", es: { morph: "Sustantivo, Neutro, Plural", syntax: "Acusativo, C. Directo", def: "huesos", etym: "Del PIE *h₃est-", exp: "Núcleo del complemento directo del verbo 'invenit', modificado por el participio concertado 'vincta'."} },
                 'vincta': { enunciado: "vinctus, -a, -um", es: { morph: "Participio de perfecto, pasivo, Neutro, Plural", syntax: "Participio Concertado", def: "atados", etym: "Del verbo vincīre (atar)", exp: "Participio concertado. Concuerda en género, número y caso (acusativo neutro plural) con el sustantivo al que complementa ('ossa')."} },
-                'senex': { enunciado: "senex, senis, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "anciano", etym: "Del PIE *sen- (viejo)", exp: "Se encuentra en aposición al sujeto 'idolum'. A su vez, es el núcleo modificado por el participio concertado 'confectus'."} },
-                'confectus': { enunciado: "confectus, -a, -um", es: { morph: "Participio de perfecto, pasivo, Masculino, Singular", syntax: "Participio Concertado", def: "consumido, deshecho", etym: "De conficere", exp: "Participio concertado que concuerda en género, número y caso (nominativo masculino singular) con 'senex'."} },
-                'audiebantur': { enunciado: "audio, -ire", es: { morph: "Verbo, 3ª persona plural, Pretérito Imperfecto Ind., Voz Pasiva", syntax: "Núcleo del predicado", def: "se oían, eran oídos", etym: "Del PIE *h₂ew- (percibir)", exp: "Está en 3ª persona del plural pasivo para concordar con los dos núcleos del sujeto ('sonus' y 'strepitus')."} },
-                'catenis': { enunciado: "catena, -ae, f", es: { morph: "Sustantivo, Femenino, Plural", syntax: "Ablativo Instrumental", def: "con cadenas", etym: "Posible origen etrusco o PIE *kat-", exp: "Ablativo sin preposición que señala el instrumento o medio con el cual se realiza la acción de estar atados ('vincta')."} }
+                'catenis': { enunciado: "catena, -ae, f", es: { morph: "Sustantivo, Femenino, Plural", syntax: "Ablativo Instrumental", def: "con cadenas", etym: "Posible origen etrusco o PIE *kat-", exp: "Ablativo sin preposición que señala el instrumento o medio con el cual se realiza la acción de estar atados ('vincta')."} },
+                'invenit': { enunciado: "invenio, -ire", es: { morph: "Verbo, 3ª persona singular, Pretérito Perfecto Ind., Activo", syntax: "Núcleo del predicado", def: "encontró", etym: "De in- + venio (venir sobre, encontrar)"} }
             };
 
             try {
                 let res;
+                // Si la palabra está en nuestro diccionario manual, usamos ese dato instantáneamente.
+                // Si no estuviera (porque el alumno cargue un texto externo, por ejemplo), intentará usar la IA.
                 if (customDict[normalizedWord]) {
                     res = customDict[normalizedWord];
                 } else {
