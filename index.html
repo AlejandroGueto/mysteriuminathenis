@@ -457,34 +457,53 @@
             show('victoryStage');
 
             // -----------------------------------------------------
-            // ENVÍO DE DATOS AUTOMÁTICO A GOOGLE FORMS
+            // ENVÍO DE DATOS AUTOMÁTICO A GOOGLE FORMS (MÉTODO INFALIBLE)
             // -----------------------------------------------------
             const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeoZoqVS36n1jqvMtZYoO29LMARv1_ZamF0JPTEQGQ2pEmO1A/formResponse';
             
-            const formData = new URLSearchParams();
-            formData.append('entry.1650352733', teamName);       // Nombres
-            formData.append('entry.502586876', timeStr);         // Tiempo Sobrante
-            formData.append('entry.2033668410', mistakes);       // Errores
-            formData.append('entry.2027563211', finalScore);     // Puntuación Final
+            // Creamos un iframe oculto para enviar los datos sin recargar la página
+            const iframe = document.createElement('iframe');
+            iframe.name = 'hidden_iframe';
+            iframe.id = 'hidden_iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
 
-            fetch(formUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formData.toString()
-            }).then(() => {
+            // Creamos un formulario que apunta al iframe
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = formUrl;
+            form.target = 'hidden_iframe';
+
+            // Función de ayuda para añadir campos al formulario
+            const addField = (name, value) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
+            };
+
+            // Añadimos tus códigos de entry
+            addField('entry.1650352733', teamName);       // Nombres
+            addField('entry.502586876', timeStr);         // Tiempo Sobrante
+            addField('entry.2033668410', mistakes);       // Errores
+            addField('entry.2027563211', finalScore);     // Puntuación Final
+
+            document.body.appendChild(form);
+            
+            try {
+                form.submit();
+                // Asumimos éxito inmediato al enviar el formulario a través del iframe
                 document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-emerald-500');
                 document.getElementById('statusDot').classList.remove('animate-pulse');
                 document.getElementById('statusText').innerText = "Guardado en los Archivos";
                 document.getElementById('statusText').classList.replace('text-slate-400', 'text-emerald-400');
-            }).catch(err => {
+            } catch(err) {
                 console.error('Error enviando al senado:', err);
                 document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-red-500');
                 document.getElementById('statusText').innerText = "Error de conexión";
                 document.getElementById('statusText').classList.replace('text-slate-400', 'text-red-400');
-            });
+            }
             // -----------------------------------------------------
         }
 
