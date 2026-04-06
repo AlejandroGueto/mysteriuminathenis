@@ -319,11 +319,13 @@
             La puerta se abre pesadamente, dejando entrar la luz del amanecer ateniense. El espíritu de la casa ha encontrado la paz gracias a vuestra magistral comprensión del latín.
         </p>
         
+        <p class="mt-4 text-amber-500 font-cinzel font-bold text-xl uppercase tracking-widest bg-amber-950/50 p-4 rounded-lg border border-amber-900">Tu resultado ha sido registrado y no puede modificarse. Ya puedes cerrar esta pestaña.</p>
+
         <!-- Senado Kuatia -->
         <div class="bg-slate-800 p-6 md:p-8 rounded-lg border border-amber-500/50 mt-4 w-full max-w-xl shadow-[0_0_30px_rgba(217,119,6,0.2)] relative">
             <div id="formStatus" class="absolute top-2 right-2 flex items-center gap-1 bg-slate-900 px-3 py-1 rounded-full border border-slate-700">
                 <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="statusDot"></div>
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest" id="statusText">Enviando al Senado...</span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest" id="statusText">Enviando email al profesor...</span>
             </div>
 
             <h3 class="text-2xl font-cinzel text-amber-500 mb-4 border-b border-amber-500/30 pb-3 uppercase tracking-widest mt-4">Informe del Senado</h3>
@@ -349,7 +351,6 @@
                 <p id="finalScore" class="text-5xl text-amber-400 font-bold font-cinzel drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"></p>
             </div>
             
-            <p class="text-slate-400 mt-6 text-sm italic">"Roma recompensa a quienes dominan la lengua de los dioses."</p>
         </div>
     </div>
 
@@ -361,6 +362,7 @@
             El tiempo se ha agotado. La oscuridad os rodea por completo. El sonido de las cadenas es lo último que escucháis antes de quedar atrapados para siempre en la mansión de Atenodoro.
         </p>
         <p class="mt-8 text-red-500 font-cinzel font-bold text-xl uppercase tracking-widest bg-red-950/50 p-4 rounded-lg border border-red-900">El Senado no concede segundas oportunidades.</p>
+        <p class="text-slate-400 mt-2 text-sm italic" id="defeatStatusText">Notificando resultado al profesor...</p>
     </div>
 
     <!-- Oikuaapáva (Oracle Drawer) -->
@@ -410,6 +412,7 @@
             } else if (status === 'lost') {
                 hide('introStage');
                 show('defeatStage');
+                document.getElementById('defeatStatusText').style.display = 'none';
             } else if (status === 'playing') {
                 const endTime = parseInt(localStorage.getItem('mysterium_endTime'));
                 teamName = localStorage.getItem('mysterium_team');
@@ -498,7 +501,7 @@
                 'senex': { enunciado: "senex, senis, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "anciano", etym: "Del PIE *sen- (viejo)", exp: "Se encuentra en aposición al sujeto 'idolum'. A su vez, es el núcleo modificado por el participio concertado 'confectus'."} },
                 'macie': { enunciado: "macies, -ei, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Ablativo, Complemento Agente o de Causa", def: "por la delgadez, por la consunción", etym: "De macer (delgado)"} },
                 'confectus': { enunciado: "confectus, -a, -um", es: { morph: "Participio de perfecto, pasivo, Masculino, Singular", syntax: "Participio Concertado", def: "consumido, deshecho", etym: "De conficere", exp: "Participio concertado que concuerda en género, número y caso (nominativo masculino singular) con 'senex'."} },
-                'cum': { enunciado: "cum", es: { morph: "Conjunción", syntax: "Cum histórico", def: "como, al...", etym: "Del PIE *kʷom", exp: "El 'cum histórico' o narrativo rige subjuntivo en tiempos del pasado (pluscuamperfecto conduxisset). Sirve para enmarcar las circunstancias de la acción principal."} },
+                'cum': { enunciado: "cum", es: { morph: "Conjunción", syntax: "Cum histórico", def: "como, al...", etym: "Del PIE *kʷom", exp: "El 'cum histórico' o narrativo rige subjuntivo en tiempos del pasado (imperfecto o pluscuamperfecto). Sirve para enmarcar las circunstancias de la acción principal."} },
                 'philosophus': { enunciado: "philosophus, -i, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "el filósofo", etym: "Del griego φιλόσοφος (amante de la sabiduría)"} },
                 'athenodorus': { enunciado: "Athenodorus, -i, m", es: { morph: "Sustantivo propio, Masculino, Singular", syntax: "Nominativo, Sujeto", def: "Atenodoro", etym: "Del griego Ἀθηνόδωρος (don de Atenea)"} },
                 'domum': { enunciado: "domus, -us, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Acusativo, Complemento Directo", def: "la casa", etym: "Del PIE *dṓm (casa, techo)"} },
@@ -603,7 +606,7 @@
             document.getElementById('timerDisplay').innerText = formatTime(timeRemaining);
             
             timerInterval = setInterval(() => {
-                // Solo si sigue en juego (protección adicional)
+                // Solo si sigue en juego (protección adicional para evitar que salte derrota si ya ha ganado)
                 if (localStorage.getItem('mysterium_status') !== 'playing') return;
 
                 timeRemaining--;
@@ -622,6 +625,28 @@
 
             localStorage.setItem('mysterium_status', 'lost');
             if (timerInterval) clearInterval(timerInterval);
+
+            // Enviar email de derrota al profesor
+            const formUrl = 'https://formsubmit.co/ajax/alejandroruizgueto@hotmail.es';
+            fetch(formUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "💀 Escape Room FALLIDO: " + teamName,
+                    Investigadores: teamName,
+                    Resultado: "Derrota (Tiempo Agotado)",
+                    Errores_Cometidos: mistakes,
+                    _template: "table"
+                })
+            }).then(() => {
+                document.getElementById('defeatStatusText').innerText = "El profesor ha sido notificado de tu fracaso.";
+            }).catch(err => {
+                document.getElementById('defeatStatusText').innerText = "Error de conexión notificando al profesor.";
+            });
+
             hide('gameStage');
             hide('gameHeader');
             hide('introStage');
@@ -652,48 +677,38 @@
             show('victoryStage');
 
             // -----------------------------------------------------
-            // OÑEMONDO GOOGLE FORMS-pe
+            // ENVÍO DE DATOS POR EMAIL (FormSubmit)
             // -----------------------------------------------------
-            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeoZoqVS36n1jqvMtZYoO29LMARv1_ZamF0JPTEQGQ2pEmO1A/formResponse';
+            const formUrl = 'https://formsubmit.co/ajax/alejandroruizgueto@hotmail.es';
             
-            const iframe = document.createElement('iframe');
-            iframe.name = 'hidden_iframe';
-            iframe.id = 'hidden_iframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = formUrl;
-            form.target = 'hidden_iframe';
-
-            const addField = (name, value) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = value;
-                form.appendChild(input);
-            };
-
-            addField('entry.1650352733', teamName);       
-            addField('entry.502586876', timeStr);         
-            addField('entry.2033668410', mistakes);       
-            addField('entry.2027563211', finalScore);     
-
-            document.body.appendChild(form);
-            
-            try {
-                form.submit();
+            fetch(formUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "🏛️ Escape Room SUPERADO: " + teamName,
+                    Investigadores: teamName,
+                    Resultado: "Victoria",
+                    Tiempo_Sobrante: timeStr,
+                    Errores_Cometidos: mistakes,
+                    Puntuacion_Final: finalScore,
+                    _template: "table"
+                })
+            }).then(response => response.json())
+              .then(data => {
                 document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-emerald-500');
                 document.getElementById('statusDot').classList.remove('animate-pulse');
-                document.getElementById('statusText').innerText = "Guardado en los Archivos";
+                document.getElementById('statusText').innerText = "Enviado por Email al Profesor";
                 document.getElementById('statusText').classList.replace('text-slate-400', 'text-emerald-400');
-            } catch(err) {
+            }).catch(err => {
                 console.error('Error enviando al senado:', err);
                 document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-red-500');
-                document.getElementById('statusText').innerText = "Error de conexión";
+                document.getElementById('statusText').innerText = "Error de conexión enviando email";
                 document.getElementById('statusText').classList.replace('text-slate-400', 'text-red-400');
-            }
+            });
+            // -----------------------------------------------------
         }
 
         function normalizeString(str) {
