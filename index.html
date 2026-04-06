@@ -51,7 +51,7 @@
         .candado-input {
             width: 3rem;
             height: 4rem;
-            font-size: 2rem;
+            font-size: 1.5rem;
             text-align: center;
             background: #1e293b;
             border: 2px solid #475569;
@@ -270,20 +270,33 @@
                 <h3 class="text-2xl text-red-400 mb-4 flex items-center gap-2">
                     <span class="bg-red-900/50 p-2 rounded text-red-300 border border-red-700">III</span> El Código de Caronte
                 </h3>
-                <p class="mb-6 text-slate-300">La puerta final tiene un mecanismo de bronce. Resolved los tres enigmas morfológicos para obtener la combinación de 3 dígitos.</p>
+                <p class="mb-6 text-slate-300">La puerta final tiene un mecanismo de bronce. Resolved los <span class="text-red-400 font-bold">cinco enigmas</span> (morfología, literatura y léxico) para obtener la combinación de 5 dígitos.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
-                        <p class="text-sm text-slate-400 mb-3">¿Cuántos verbos en modo <strong>subjuntivo</strong> hay en todo el texto?</p>
-                        <input type="number" id="lock1" min="0" max="9" class="candado-input">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+                    <!-- Lock 1 -->
+                    <div class="bg-slate-900 p-3 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-[10px] md:text-xs text-slate-400 mb-3">Nº de verbos en modo <strong>subjuntivo</strong>.</p>
+                        <input type="number" id="lock1" min="0" max="9" class="candado-input mt-auto">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
-                        <p class="text-sm text-slate-400 mb-3">¿A qué declinación (número) pertenece el sustantivo <strong>noctis</strong>?</p>
-                        <input type="number" id="lock2" min="1" max="5" class="candado-input">
+                    <!-- Lock 2 -->
+                    <div class="bg-slate-900 p-3 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-[10px] md:text-xs text-slate-400 mb-3">Declinación (Nº) del sustantivo <strong>noctis</strong>.</p>
+                        <input type="number" id="lock2" min="1" max="5" class="candado-input mt-auto">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
-                        <p class="text-sm text-slate-400 mb-3">Ordenando los casos del 1 al 6 (Nom, Voc, Ac, Gen, Dat, Abl), ¿qué número corresponde a <strong>catenis</strong>?</p>
-                        <input type="number" id="lock3" min="1" max="6" class="candado-input">
+                    <!-- Lock 3 -->
+                    <div class="bg-slate-900 p-3 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-[10px] md:text-xs text-slate-400 mb-3">Orden tradicional (1 a 6). Caso de <strong>catenis</strong>.</p>
+                        <input type="number" id="lock3" min="1" max="6" class="candado-input mt-auto">
+                    </div>
+                    <!-- Lock 4 (New) -->
+                    <div class="bg-slate-900 p-3 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-[10px] md:text-xs text-slate-400 mb-3">¿A qué género literario pertenece? <br>(1:Épica, 2:Teatro, 3:Lírica, 4:Epistolografía)</p>
+                        <input type="number" id="lock4" min="1" max="5" class="candado-input mt-auto">
+                    </div>
+                    <!-- Lock 5 (New) -->
+                    <div class="bg-slate-900 p-3 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-[10px] md:text-xs text-slate-400 mb-3">Nº de helenismos en: <em>philosophus, phantasma, domus, senex</em>.</p>
+                        <input type="number" id="lock5" min="0" max="4" class="candado-input mt-auto">
                     </div>
                 </div>
 
@@ -291,7 +304,7 @@
                     <button onclick="checkPrueba3()" class="w-full py-4 bg-gradient-to-r from-red-800 to-amber-700 hover:from-red-700 hover:to-amber-600 text-white font-cinzel font-bold text-xl rounded transition shadow-lg shadow-red-900/50 border border-red-500/50">
                         Desbloquear Puerta
                     </button>
-                    <p id="p3-error" class="text-red-400 text-sm mt-3 hidden">El candado vibra y permanece cerrado (-50 pts). La combinación es incorrecta.</p>
+                    <p id="p3-error" class="text-red-400 text-sm mt-3 hidden">El candado vibra y permanece cerrado (-50 pts). La combinación de 5 dígitos es incorrecta.</p>
                 </div>
             </div>
 
@@ -465,7 +478,7 @@
             // sin depender de la Inteligencia Artificial.
             const customDict = {
                 'erat': { enunciado: "sum, esse, fui", es: { morph: "Verbo, 3ª persona singular, Pretérito Imperfecto Ind., Activo", syntax: "Cópula / Núcleo del predicado verbal", def: "era, estaba, había", etym: "Del PIE *h₁es- (ser, existir)"} },
-                'athenis': { enunciado: "Athenae, -arum, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Ablativo, Complemento Circunstancial de Lugar (Locativo)", def: "en Atenas", etym: "Relacionado con la diosa Atenea"} },
+                'athenis': { enunciado: "Athenae, -arum, f", es: { morph: "Sustantivo, Femenino, Plural", syntax: "Ablativo, Complemento Circunstancial de Lugar (Locativo)", def: "en Atenas", etym: "Relacionado con la diosa Atenea"} },
                 'magna': { enunciado: "magnus, -a, -um", es: { morph: "Adjetivo, Femenino, Singular", syntax: "Nominativo, Atributo o Adyacente de 'domus'", def: "grande", etym: "Del PIE *meǵh₂s (grande)"} },
                 'domus': { enunciado: "domus, -us, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Nominativo, Sujeto", def: "casa, mansión", etym: "Del PIE *dṓm (casa, techo)"} },
                 'sed': { enunciado: "sed", es: { morph: "Conjunción", syntax: "Conjunción coordinada adversativa", def: "pero, sino", etym: "Ablativo arcaico de se (sin, aparte)"} },
@@ -489,7 +502,7 @@
                 'philosophus': { enunciado: "philosophus, -i, m", es: { morph: "Sustantivo, Masculino, Singular", syntax: "Nominativo, Aposición", def: "el filósofo", etym: "Del griego φιλόσοφος (amante de la sabiduría)"} },
                 'athenodorus': { enunciado: "Athenodorus, -i, m", es: { morph: "Sustantivo propio, Masculino, Singular", syntax: "Nominativo, Sujeto", def: "Atenodoro", etym: "Del griego Ἀθηνόδωρος (don de Atenea)"} },
                 'domum': { enunciado: "domus, -us, f", es: { morph: "Sustantivo, Femenino, Singular", syntax: "Acusativo, Complemento Directo", def: "la casa", etym: "Del PIE *dṓm (casa, techo)"} },
-                'conduxisset': { enunciado: "conduco, -ere", es: { morph: "Verbo, 3ª persona singular, Pluscuamperfecto de Subjuntivo, Activo", syntax: "Núcleo del predicado (Oración subordinada cum histórico)", def: "como hubiera alquilado, al haber alquilado", etym: "De con- + duco (llevar, reunir)"} },
+                'conduxisset': { enunciado: "conduco, -ere", es: { morph: "Verbo, 3ª persona singular, Pluscuamperfecto de Subjuntivo, Activo", syntax: "Núcleo del predicado (Oración subordinada)", def: "como hubiera alquilado, al haber alquilado", etym: "De con- + duco (llevar, reunir)"} },
                 'in': { enunciado: "in", es: { morph: "Preposición", syntax: "Preposición que rige ablativo", def: "en", etym: "Del PIE *en (en)"} },
                 'tenebris': { enunciado: "tenebrae, -arum, f", es: { morph: "Sustantivo, Femenino, Plural", syntax: "Ablativo, Complemento Circunstancial de Lugar", def: "en las tinieblas", etym: "Del PIE *temes- (oscuro)"} },
                 'vigilabat': { enunciado: "vigilo, -are", es: { morph: "Verbo, 3ª persona singular, Pretérito Imperfecto Ind., Activo", syntax: "Núcleo del predicado", def: "vigilaba, estaba despierto", etym: "De vigil (despierto)"} },
@@ -590,6 +603,9 @@
             document.getElementById('timerDisplay').innerText = formatTime(timeRemaining);
             
             timerInterval = setInterval(() => {
+                // Solo si sigue en juego (protección adicional)
+                if (localStorage.getItem('mysterium_status') !== 'playing') return;
+
                 timeRemaining--;
                 document.getElementById('timerDisplay').innerText = formatTime(timeRemaining);
                 
@@ -601,6 +617,9 @@
         }
 
         function gameOver() {
+            // Protección: Si ya ganaron, no se puede ejecutar la derrota bajo ningún concepto
+            if (localStorage.getItem('mysterium_status') === 'won') return;
+
             localStorage.setItem('mysterium_status', 'lost');
             if (timerInterval) clearInterval(timerInterval);
             hide('gameStage');
@@ -748,8 +767,10 @@
             const l1 = parseInt(document.getElementById('lock1').value, 10);
             const l2 = parseInt(document.getElementById('lock2').value, 10);
             const l3 = parseInt(document.getElementById('lock3').value, 10);
+            const l4 = parseInt(document.getElementById('lock4').value, 10);
+            const l5 = parseInt(document.getElementById('lock5').value, 10);
 
-            if (l1 === 1 && l2 === 3 && l3 === 6) {
+            if (l1 === 1 && l2 === 3 && l3 === 6 && l4 === 4 && l5 === 2) {
                 victory();
             } else {
                 mistakes++;
