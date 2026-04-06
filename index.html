@@ -566,12 +566,15 @@
         }
 
         function checkPrueba3() {
-            const l1 = document.getElementById('lock1').value;
-            const l2 = document.getElementById('lock2').value;
-            const l3 = document.getElementById('lock3').value;
+            // Utilizamos parseInt para convertir el texto en número real, 
+            // evitando así que el navegador devuelva strings con espacios o errores ocultos.
+            const l1 = parseInt(document.getElementById('lock1').value, 10);
+            const l2 = parseInt(document.getElementById('lock2').value, 10);
+            const l3 = parseInt(document.getElementById('lock3').value, 10);
 
             // Código: 1 - 3 - 6
-            if (l1 === '1' && l2 === '3' && l3 === '6') {
+            // (1 verbo subjuntivo, 3ra declinación, 6to caso [ablativo])
+            if (l1 === 1 && l2 === 3 && l3 === 6) {
                 victory();
             } else {
                 mistakes++;
