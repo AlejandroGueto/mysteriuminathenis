@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mysterium in Athenis - Escape Room Latino</title>
+    <!-- Tailwind CSS para los estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuentes de Google para dar un toque clásico e inmersivo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+            background-image: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        /* Estilo de pergamino para el texto latino */
+        .pergamino {
+            background-color: #fdf6e3;
+            color: #332b22;
+            box-shadow: inset 0 0 40px rgba(139, 115, 85, 0.3), 0 10px 20px rgba(0,0,0,0.5);
+            border: 1px solid #d4c49c;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" opacity="0.05"><rect width="200" height="200" fill="%238b7355"/><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.5"/></svg>');
+        }
+        .hidden-stage {
+            display: none;
+        }
+        .input-latino {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #94a3b8;
+            color: #f8fafc;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-latino:focus {
+            border-bottom-color: #fbbf24; /* amber-400 */
+        }
+        .candado-input {
+            width: 3rem;
+            height: 4rem;
+            font-size: 2rem;
+            text-align: center;
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 0.5rem;
+            color: #fbbf24;
+            font-family: 'Cinzel', serif;
+        }
+        .candado-input:focus {
+            border-color: #fbbf24;
+            outline: none;
+        }
+        /* Ocultar flechas en input number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center p-4 md:p-8">
+
+    <!-- Encabezado y Temporizador -->
+    <header class="w-full max-w-5xl flex justify-between items-center border-b border-slate-700 pb-4 mb-8 hidden-stage" id="gameHeader">
+        <div class="text-xl md:text-2xl font-cinzel text-amber-400 tracking-widest">Agentibus in Rebus</div>
+        <div class="flex items-center gap-3 text-red-400 font-cinzel text-2xl font-bold bg-slate-800 px-4 py-2 rounded-md shadow-lg border border-red-900/50">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="timerDisplay">45:00</span>
+        </div>
+    </header>
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="introStage" class="w-full max-w-3xl flex flex-col items-center text-center mt-6 md:mt-12 space-y-8">
+        <h1 class="text-5xl md:text-6xl text-amber-400 tracking-widest uppercase text-shadow-sm">Mysterium<br><span class="text-3xl md:text-4xl text-slate-300">in Athenis</span></h1>
+        
+        <div class="bg-slate-800/80 p-8 rounded-lg border border-slate-700 shadow-2xl backdrop-blur-sm w-full max-w-2xl">
+            <p class="text-lg md:text-xl leading-relaxed mb-8 text-slate-300 text-justify">
+                "Sois un equipo de investigadores de lo paranormal en la antigua Roma. Habéis sido contratados por el senado para investigar una mansión en Atenas de la que nadie sale cuerdo. La única forma de apaciguar al espíritu que la habita y desbloquear la puerta de salida es descifrar sus últimos pasos. Tenéis 45 minutos antes de que la locura se apodere de vosotros. Vuestra única herramienta: la gramática latina."
+            </p>
+            
+            <!-- Registro de Equipo -->
+            <div class="mb-8 bg-slate-900/60 p-6 rounded border border-slate-600">
+                <label for="teamName" class="block text-amber-400 font-cinzel text-lg mb-3">Identificación de los Investigadores:</label>
+                <input type="text" id="teamName" class="w-full bg-slate-800 border-2 border-slate-500 text-white p-3 rounded font-cinzel focus:border-amber-400 focus:outline-none transition text-center text-lg shadow-inner" placeholder="Escribid vuestros nombres (Ej: Lucía, Marcos y Elena)" autocomplete="off">
+                <p id="name-error" class="text-red-400 text-sm mt-3 hidden font-bold">⚠️ El Senado requiere que os identifiquéis antes de entrar.</p>
+            </div>
+
+            <button onclick="startGame()" class="px-8 py-4 bg-amber-600 hover:bg-amber-500 text-slate-900 font-cinzel font-bold text-xl rounded transition transform hover:scale-105 shadow-[0_0_15px_rgba(217,119,6,0.5)] w-full md:w-auto">
+                Entrar en la Mansión
+            </button>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
+    <div id="gameStage" class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 gap-8 hidden-stage">
+        
+        <!-- Columna Izquierda: El Pergamino (El Texto) -->
+        <div class="lg:col-span-2 flex flex-col h-full">
+            <div class="pergamino p-6 md:p-8 rounded-lg relative h-full">
+                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-amber-900/20 rounded-full"></div>
+                <h2 class="text-2xl font-cinzel text-center border-b-2 border-amber-900/20 pb-4 mb-6 mt-2 font-bold uppercase">Códice de Atenodoro</h2>
+                <p class="text-lg leading-loose text-justify font-medium">
+                    "Erat Athenis magna domus, sed infamis. Per silentium noctis sonus ferri et strepitus vinculorum audiebantur. Mox apparebat idolum, senex macie confectus. Cum philosophus Athenodorus domum conduxisset, in tenebris vigilabat. Subito fantasma advenit et digito signum dedit. In area domus, monstro evanescente, Athenodorus ossa vincta catenis invenit."
+                </p>
+                <div class="mt-8 pt-4 border-t border-amber-900/20 text-sm italic text-amber-900/70">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>macies -ei:</strong> extrema delgadez</li>
+                        <li><strong>conduco:</strong> alquilar</li>
+                        <li><strong>vinctus -a -um:</strong> atado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Las Pruebas -->
+        <div class="lg:col-span-3 flex flex-col space-y-6">
+            
+            <!-- PRUEBA 1: Sintaxis -->
+            <div id="prueba1" class="bg-slate-800 border border-slate-600 p-6 rounded-lg shadow-lg relative overflow-hidden transition-all duration-500">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <h3 class="text-2xl text-blue-400 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-900/50 p-2 rounded text-blue-300 border border-blue-700">I</span> El Ojo de Minerva (Sintaxis)
+                </h3>
+                <p class="mb-6 text-slate-300">Para poder "ver" al fantasma, debéis diseccionar la magia que lo oculta identificando tres estructuras en el texto. Escribid la palabra exacta en latín.</p>
+                
+                <div class="space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                        <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">1. Verbo de la oración de CUM histórico:</label>
+                        <input type="text" id="p1-q1" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="verbo">
+                    </div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                        <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">2. Participio de la construcción de Ablativo Absoluto:</label>
+                        <input type="text" id="p1-q2" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="participio">
+                    </div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                        <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">3. Participio concertado que acompaña a 'senex':</label>
+                        <input type="text" id="p1-q3" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="participio">
+                    </div>
+                </div>
+                <div class="mt-6 text-right">
+                    <button onclick="checkPrueba1()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition">Revelar Sello</button>
+                </div>
+                <p id="p1-error" class="text-red-400 text-sm mt-3 hidden text-right">Las entidades místicas rechazan tu respuesta (-50 pts). Revisa la ortografía.</p>
+            </div>
+
+            <!-- PRUEBA 2: Traducción -->
+            <div id="prueba2" class="bg-slate-800 border border-slate-600 p-6 rounded-lg shadow-lg relative overflow-hidden transition-all duration-500 opacity-50 pointer-events-none">
+                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                <h3 class="text-2xl text-emerald-400 mb-4 flex items-center gap-2">
+                    <span class="bg-emerald-900/50 p-2 rounded text-emerald-300 border border-emerald-700">II</span> La Voz del Más Allá (Traducción)
+                </h3>
+                <p class="mb-6 text-slate-300">El espectro intenta comunicarse. Seleccionad la traducción correcta para estos tres fragmentos clave del texto.</p>
+                
+                <div class="space-y-6">
+                    <!-- Q1 -->
+                    <div class="bg-slate-900/50 p-4 rounded border border-slate-700">
+                        <p class="font-cinzel text-amber-200 mb-3 text-lg">"Cum philosophus Athenodorus domum conduxisset..."</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t1" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">a) Cuando el filósofo alquilaba la casa</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t1" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">b) Como el filósofo hubiera alquilado la casa</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t1" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">c) Aunque el filósofo alquiló la casa</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="bg-slate-900/50 p-4 rounded border border-slate-700">
+                        <p class="font-cinzel text-amber-200 mb-3 text-lg">"...monstro evanescente..."</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t2" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">a) al desaparecer el monstruo</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t2" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">b) el monstruo desvanecido</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t2" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">c) para desvanecer al monstruo</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="bg-slate-900/50 p-4 rounded border border-slate-700">
+                        <p class="font-cinzel text-amber-200 mb-3 text-lg">"...ossa vincta catenis."</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t3" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">a) las cadenas atan los huesos</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t3" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">b) unos huesos que atan cadenas</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="t3" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600">
+                                <span class="group-hover:text-emerald-300 transition">c) unos huesos atados con cadenas</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 text-right">
+                    <button onclick="checkPrueba2()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded transition">Escuchar Mensaje</button>
+                </div>
+                <p id="p2-error" class="text-red-400 text-sm mt-3 hidden text-right">El fantasma no te comprende (-50 pts). Revisa tus traducciones.</p>
+            </div>
+
+            <!-- PRUEBA 3: El Candado -->
+            <div id="prueba3" class="bg-slate-800 border border-slate-600 p-6 rounded-lg shadow-lg relative overflow-hidden transition-all duration-500 opacity-50 pointer-events-none">
+                <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                <h3 class="text-2xl text-red-400 mb-4 flex items-center gap-2">
+                    <span class="bg-red-900/50 p-2 rounded text-red-300 border border-red-700">III</span> El Código de Caronte
+                </h3>
+                <p class="mb-6 text-slate-300">La puerta final tiene un mecanismo de bronce. Resolved los tres enigmas morfológicos para obtener la combinación de 3 dígitos.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-sm text-slate-400 mb-3">¿Cuántos verbos en modo <strong>subjuntivo</strong> hay en todo el texto?</p>
+                        <input type="number" id="lock1" min="0" max="9" class="candado-input">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-sm text-slate-400 mb-3">¿A qué declinación (número) pertenece el sustantivo <strong>noctis</strong>?</p>
+                        <input type="number" id="lock2" min="1" max="5" class="candado-input">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded text-center border border-slate-700 flex flex-col items-center justify-between">
+                        <p class="text-sm text-slate-400 mb-3">Ordenando los casos del 1 al 6 (Nom, Voc, Ac, Gen, Dat, Abl), ¿qué número corresponde a <strong>catenis</strong>?</p>
+                        <input type="number" id="lock3" min="1" max="6" class="candado-input">
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center w-full">
+                    <button onclick="checkPrueba3()" class="w-full py-4 bg-gradient-to-r from-red-800 to-amber-700 hover:from-red-700 hover:to-amber-600 text-white font-cinzel font-bold text-xl rounded transition shadow-lg shadow-red-900/50 border border-red-500/50">
+                        Desbloquear Puerta
+                    </button>
+                    <p id="p3-error" class="text-red-400 text-sm mt-3 hidden">El candado vibra y permanece cerrado (-50 pts). La combinación es incorrecta.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PANTALLA DE VICTORIA -->
+    <div id="victoryStage" class="w-full max-w-3xl flex flex-col items-center text-center mt-12 space-y-4 hidden-stage">
+        <h1 class="text-5xl md:text-6xl font-cinzel text-amber-400 text-shadow-sm mb-2">¡Habéis Escapado!</h1>
+        <div class="text-8xl mb-2">🏛️☀️</div>
+        <p class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-2xl mb-4">
+            La puerta se abre pesadamente, dejando entrar la luz del amanecer ateniense. El espíritu de la casa ha encontrado la paz gracias a vuestra magistral comprensión del latín.
+        </p>
+        
+        <!-- Tarjeta de Puntuación -->
+        <div class="bg-slate-800 p-6 md:p-8 rounded-lg border border-amber-500/50 mt-4 w-full max-w-xl shadow-[0_0_30px_rgba(217,119,6,0.2)]">
+            <h3 class="text-2xl font-cinzel text-amber-500 mb-4 border-b border-amber-500/30 pb-3 uppercase tracking-widest">Informe del Senado</h3>
+            
+            <p class="text-slate-300 mb-6 text-lg">Investigadores: <span id="finalTeamName" class="text-amber-400 font-bold font-cinzel text-xl ml-2"></span></p>
+            
+            <div class="grid grid-cols-2 gap-4 my-6 bg-slate-900 p-4 rounded border border-slate-700 shadow-inner">
+                <div class="flex flex-col items-center justify-center p-2">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1 text-center">Tiempo Sobrante</p>
+                    <p id="finalTime" class="text-3xl text-emerald-400 font-bold font-cinzel"></p>
+                </div>
+                <div class="flex flex-col items-center justify-center p-2 border-l border-slate-700">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1 text-center">Intentos Fallidos</p>
+                    <p id="finalMistakes" class="text-3xl text-red-400 font-bold font-cinzel"></p>
+                </div>
+            </div>
+            
+            <div class="bg-amber-900/40 p-6 rounded border border-amber-500/50 mb-4 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 opacity-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="text-sm text-amber-200 uppercase tracking-widest mb-2">Puntuación Final</p>
+                <p id="finalScore" class="text-5xl text-amber-400 font-bold font-cinzel drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"></p>
+            </div>
+            
+            <p class="text-slate-400 mt-6 text-sm italic">"Roma recompensa a quienes dominan la lengua de los dioses."</p>
+        </div>
+        
+        <button onclick="location.reload()" class="mt-8 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-cinzel rounded border border-slate-600 transition">
+            Realizar Nueva Investigación
+        </button>
+    </div>
+
+    <!-- PANTALLA DE DERROTA -->
+    <div id="defeatStage" class="w-full max-w-3xl flex flex-col items-center text-center mt-20 space-y-6 hidden-stage">
+        <h1 class="text-5xl md:text-6xl font-cinzel text-red-600 text-shadow-sm mb-4">La Locura se ha Apoderado de Vosotros</h1>
+        <div class="text-8xl mb-4">💀</div>
+        <p class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-2xl">
+            El tiempo se ha agotado. La oscuridad os rodea por completo. El sonido de las cadenas es lo último que escucháis antes de quedar atrapados para siempre en la mansión de Atenodoro.
+        </p>
+        <button onclick="location.reload()" class="mt-8 px-8 py-4 bg-red-900 hover:bg-red-800 text-white font-cinzel font-bold text-xl rounded shadow-[0_0_15px_rgba(153,27,27,0.5)] transition">
+            Intentarlo de Nuevo
+        </button>
+    </div>
+
+    <!-- LÓGICA DE JUEGO EN JAVASCRIPT -->
+    <script>
+        // Variables de estado
+        let timerInterval;
+        let timeRemaining = 45 * 60; // 45 minutos en segundos
+        
+        // Variables para la puntuación
+        let teamName = "";
+        let mistakes = 0;
+        const BASE_SCORE = 3000; // Puntuación base máxima
+
+        // Funciones de utilidad
+        function show(id) { document.getElementById(id).classList.remove('hidden-stage'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden-stage'); }
+        
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function startGame() {
+            // Validar nombre del equipo
+            const nameInput = document.getElementById('teamName').value.trim();
+            if (!nameInput) {
+                document.getElementById('name-error').classList.remove('hidden');
+                // Añadir efecto de sacudida
+                const inputField = document.getElementById('teamName');
+                inputField.classList.add('border-red-500');
+                setTimeout(() => inputField.classList.remove('border-red-500'), 1000);
+                return;
+            }
+            
+            teamName = nameInput;
+            hide('introStage');
+            show('gameHeader');
+            show('gameStage');
+            
+            // Iniciar temporizador
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('timerDisplay').innerText = formatTime(timeRemaining);
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function gameOver() {
+            hide('gameStage');
+            hide('gameHeader');
+            show('defeatStage');
+        }
+
+        function victory() {
+            clearInterval(timerInterval);
+            hide('gameStage');
+            hide('gameHeader');
+            
+            // Cálculo de puntuación
+            // Base: 3000. Se resta 1 punto por cada segundo gastado y 50 puntos por cada error.
+            const secondsUsed = (45 * 60) - timeRemaining;
+            let finalScore = BASE_SCORE - secondsUsed - (mistakes * 50);
+            if (finalScore < 0) finalScore = 0; // Evitar puntuaciones negativas
+
+            // Rellenar datos en la tarjeta de victoria
+            document.getElementById('finalTeamName').innerText = teamName;
+            document.getElementById('finalTime').innerText = formatTime(timeRemaining);
+            document.getElementById('finalMistakes').innerText = mistakes;
+            document.getElementById('finalScore').innerText = finalScore + " pts";
+            
+            show('victoryStage');
+        }
+
+        // Validación de Pruebas
+        function normalizeString(str) {
+            return str.toLowerCase().trim().replace(/[.,;:!?]/g, '');
+        }
+
+        function checkPrueba1() {
+            const q1 = normalizeString(document.getElementById('p1-q1').value);
+            const q2 = normalizeString(document.getElementById('p1-q2').value);
+            const q3 = normalizeString(document.getElementById('p1-q3').value);
+
+            // Respuestas correctas
+            const isQ1Correct = q1 === 'conduxisset';
+            const isQ2Correct = q2 === 'evanescente';
+            const isQ3Correct = q3 === 'confectus';
+
+            if (isQ1Correct && isQ2Correct && isQ3Correct) {
+                // Éxito
+                document.getElementById('p1-error').classList.add('hidden');
+                const btn = document.querySelector('#prueba1 button');
+                btn.innerText = "¡Sello Revelado!";
+                btn.classList.replace('bg-blue-600', 'bg-green-600');
+                btn.classList.replace('hover:bg-blue-500', 'bg-green-600');
+                btn.disabled = true;
+
+                // Desbloquear Prueba 2
+                const p2 = document.getElementById('prueba2');
+                p2.classList.remove('opacity-50', 'pointer-events-none');
+                p2.classList.add('ring-2', 'ring-emerald-400', 'shadow-[0_0_20px_rgba(16,185,129,0.3)]');
+                
+                // Quitar highlight de p1
+                document.getElementById('prueba1').classList.remove('ring-2', 'ring-blue-400');
+                document.getElementById('prueba1').classList.add('opacity-80');
+            } else {
+                // Error
+                mistakes++;
+                document.getElementById('p1-error').classList.remove('hidden');
+                // Efecto visual de error
+                const panel = document.getElementById('prueba1');
+                panel.classList.add('border-red-500');
+                setTimeout(() => panel.classList.remove('border-red-500'), 1000);
+            }
+        }
+
+        function checkPrueba2() {
+            const q1 = document.querySelector('input[name="t1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="t2"]:checked')?.value;
+            const q3 = document.querySelector('input[name="t3"]:checked')?.value;
+
+            // Respuestas correctas: 1b, 2a, 3c
+            if (q1 === 'b' && q2 === 'a' && q3 === 'c') {
+                document.getElementById('p2-error').classList.add('hidden');
+                const btn = document.querySelector('#prueba2 button');
+                btn.innerText = "¡Mensaje Descifrado!";
+                btn.classList.replace('bg-emerald-600', 'bg-green-600');
+                btn.classList.replace('hover:bg-emerald-500', 'bg-green-600');
+                btn.disabled = true;
+
+                // Desbloquear Prueba 3
+                const p3 = document.getElementById('prueba3');
+                p3.classList.remove('opacity-50', 'pointer-events-none');
+                p3.classList.add('ring-2', 'ring-red-400', 'shadow-[0_0_20px_rgba(248,113,113,0.3)]');
+                
+                // Opacidad en P2
+                document.getElementById('prueba2').classList.remove('ring-2', 'ring-emerald-400');
+                document.getElementById('prueba2').classList.add('opacity-80');
+            } else {
+                mistakes++;
+                document.getElementById('p2-error').classList.remove('hidden');
+                const panel = document.getElementById('prueba2');
+                panel.classList.add('border-red-500');
+                setTimeout(() => panel.classList.remove('border-red-500'), 1000);
+            }
+        }
+
+        function checkPrueba3() {
+            const l1 = document.getElementById('lock1').value;
+            const l2 = document.getElementById('lock2').value;
+            const l3 = document.getElementById('lock3').value;
+
+            // Código: 1 - 3 - 6
+            if (l1 === '1' && l2 === '3' && l3 === '6') {
+                victory();
+            } else {
+                mistakes++;
+                document.getElementById('p3-error').classList.remove('hidden');
+                const inputs = document.querySelectorAll('.candado-input');
+                inputs.forEach(i => {
+                    i.classList.add('border-red-500', 'text-red-500');
+                    setTimeout(() => i.classList.remove('border-red-500', 'text-red-500'), 1000);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
