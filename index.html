@@ -431,7 +431,16 @@
         }
 
         function victory() {
+            if (timerInterval) clearInterval(timerInterval);
             localStorage.setItem('mysterium_status', 'won');
+            
+            // Cálculo de puntuación
+            const secondsUsed = (45 * 60) - timeRemaining;
+            let finalScore = BASE_SCORE - secondsUsed - (mistakes * 50);
+            if (finalScore < 0) finalScore = 0; // Evitar puntuaciones negativas
+
+            const timeStr = formatTime(timeRemaining);
+
             // Rellenar datos en la tarjeta de victoria
             document.getElementById('finalTeamName').innerText = teamName;
             document.getElementById('finalTime').innerText = timeStr;
@@ -443,8 +452,39 @@
             localStorage.setItem('mysterium_mistakes', mistakes.toString());
             localStorage.setItem('mysterium_score', finalScore + " pts");
 
+            hide('gameStage');
+            hide('gameHeader');
             show('victoryStage');
 
+            // -----------------------------------------------------
+            // ENVÍO DE DATOS AUTOMÁTICO A GOOGLE FORMS
+            // -----------------------------------------------------
+            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeoZoqVS36n1jqvMtZYoO29LMARv1_ZamF0JPTEQGQ2pEmO1A/formResponse';
+            
+            const formData = new URLSearchParams();
+            formData.append('entry.1650352733', teamName);       // Nombres
+            formData.append('entry.502586876', timeStr);         // Tiempo Sobrante
+            formData.append('entry.2033668410', mistakes);       // Errores
+            formData.append('entry.2027563211', finalScore);     // Puntuación Final
+
+            fetch(formUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            }).then(() => {
+                document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-emerald-500');
+                document.getElementById('statusDot').classList.remove('animate-pulse');
+                document.getElementById('statusText').innerText = "Guardado en los Archivos";
+                document.getElementById('statusText').classList.replace('text-slate-400', 'text-emerald-400');
+            }).catch(err => {
+                console.error('Error enviando al senado:', err);
+                document.getElementById('statusDot').classList.replace('bg-amber-500', 'bg-red-500');
+                document.getElementById('statusText').innerText = "Error de conexión";
+                document.getElementById('statusText').classList.replace('text-slate-400', 'text-red-400');
+            });
             // -----------------------------------------------------
         }
 
