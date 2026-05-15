@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mysterium in Athenis - Escape Room Latino</title>
+    <title>Mysterium in Athenis - Escape Room Premium</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Ta'anga'i (Lucide Icons) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Letrakuéra -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,900&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Merriweather', serif;
@@ -19,16 +20,43 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        h1, h2, h3, .font-cinzel {
-            font-family: 'Cinzel', serif;
-        }
+        h1, h2, h3, .font-cinzel { font-family: 'Cinzel', serif; }
         .greek-display { font-family: 'Playfair Display', serif; }
         
-        /* Kuatia yma (Pergamino) */
+        .cinematic-vignette {
+            position: fixed; inset: 0; pointer-events: none; z-index: 50;
+            background: radial-gradient(circle at center, transparent 40%, rgba(2, 6, 23, 0.95) 100%);
+        }
+        
+        .spectre-container {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        @keyframes phantomMove1 {
+            0% { transform: translate(-10vw, 10vh) scale(0.8); opacity: 0.1; }
+            50% { transform: translate(60vw, 50vh) scale(1.2); opacity: 0.2; }
+            100% { transform: translate(-10vw, 80vh) scale(0.9); opacity: 0.1; }
+        }
+        @keyframes phantomMove2 {
+            0% { transform: translate(80vw, 80vh) scale(1); opacity: 0.1; }
+            50% { transform: translate(20vw, 30vh) scale(1.3); opacity: 0.15; }
+            100% { transform: translate(90vw, 10vh) scale(0.8); opacity: 0.1; }
+        }
+        .spectre-orb-1 {
+            position: absolute; width: 50vw; height: 50vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            animation: phantomMove1 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            filter: blur(60px);
+        }
+        .spectre-orb-2 {
+            position: absolute; width: 40vw; height: 40vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: phantomMove2 40s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            filter: blur(50px);
+        }
+
         .pergamino {
-            background-color: #fdf6e3;
-            color: #332b22;
-            box-shadow: inset 0 0 40px rgba(139, 115, 85, 0.3), 0 10px 20px rgba(0,0,0,0.5);
+            background-color: #fdf6e3; color: #332b22;
+            box-shadow: inset 0 0 40px rgba(139, 115, 85, 0.3), 0 10px 30px rgba(0,0,0,0.8);
             border: 1px solid #d4c49c;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" opacity="0.05"><rect width="200" height="200" fill="%238b7355"/><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.5"/></svg>');
         }
@@ -38,45 +66,31 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .input-latino {
-            background: rgba(15, 23, 42, 0.6);
-            border: none;
-            border-bottom: 2px solid #64748b;
-            color: #f8fafc;
-            text-align: center;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            outline: none;
-            transition: all 0.3s;
-            padding: 0.5rem;
-            border-radius: 4px 4px 0 0;
+            background: rgba(15, 23, 42, 0.6); border: none; border-bottom: 2px solid #64748b;
+            color: #f8fafc; text-align: center; font-family: 'Cinzel', serif; font-size: 1.1rem;
+            outline: none; transition: all 0.3s; padding: 0.5rem; border-radius: 4px 4px 0 0;
         }
         .input-latino:focus { border-bottom-color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
         
         .candado-input {
-            width: 3rem;
-            height: 4rem;
-            font-size: 1.5rem;
-            text-align: center;
-            background: #1e293b;
-            border: 2px solid #475569;
-            border-radius: 0.5rem;
-            color: #fbbf24;
-            font-family: 'Cinzel', serif;
-            transition: all 0.3s;
+            width: 3rem; height: 4rem; font-size: 1.5rem; text-align: center;
+            background: #1e293b; border: 2px solid #475569; border-radius: 0.5rem;
+            color: #fbbf24; font-family: 'Cinzel', serif; transition: all 0.3s;
         }
         .candado-input:focus { border-color: #fbbf24; outline: none; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
-        
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+
+        .custom-select {
+            appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23fbbf24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>');
+            background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;
+        }
 
         .word-token { display: inline-block; padding: 0 4px; cursor: pointer; transition: 0.2s; border-radius: 4px; border-bottom: 2px solid transparent; }
         .word-token:hover { color: #b45309; background: rgba(217, 119, 6, 0.15); border-bottom-color: #d97706; }
         
         .drawer { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; }
-        .lang-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 900; text-transform: uppercase; margin-right: 8px; display: inline-block; }
         
-        /* Modal y Toasts */
         .custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(8px); }
         .custom-modal.active { opacity: 1; pointer-events: auto; }
 
@@ -89,9 +103,14 @@
 </head>
 <body class="flex flex-col items-center p-4 md:p-8 relative">
 
+    <div class="cinematic-vignette"></div>
+    <div class="spectre-container">
+        <div class="spectre-orb-1"></div>
+        <div class="spectre-orb-2"></div>
+    </div>
+
     <div id="toast-container"></div>
 
-    <!-- Vídeo Histórico Modal -->
     <div id="videoModal" class="custom-modal flex-col">
         <div class="bg-black border border-amber-500/50 shadow-[0_0_50px_rgba(217,119,6,0.2)] w-full max-w-4xl relative rounded overflow-hidden">
             <div class="bg-slate-900 p-3 flex justify-between items-center border-b border-amber-900/50">
@@ -107,25 +126,22 @@
         </div>
     </div>
 
-    <!-- Cabecera y Tiempo -->
-    <header class="w-full max-w-5xl flex justify-between items-center border-b border-slate-700 pb-4 mb-8 hidden-stage fade-in" id="gameHeader">
-        <div class="text-xl md:text-2xl font-cinzel text-amber-400 tracking-widest flex items-center gap-2">
+    <header class="w-full max-w-5xl flex justify-between items-center border-b border-slate-700 pb-4 mb-8 hidden-stage fade-in relative z-10" id="gameHeader">
+        <div class="text-xl md:text-2xl font-cinzel text-amber-400 tracking-widest flex items-center gap-2 drop-shadow-md">
             <i data-lucide="eye" class="w-6 h-6"></i> Agentibus in Rebus
         </div>
-        <div class="flex items-center gap-3 text-red-400 font-cinzel text-2xl font-bold bg-slate-800 px-4 py-2 rounded-md shadow-lg border border-red-900/50">
+        <div class="flex items-center gap-3 text-red-400 font-cinzel text-2xl font-bold bg-slate-900/80 px-5 py-2 rounded-md shadow-[0_0_20px_rgba(220,38,38,0.2)] border border-red-900/50 backdrop-blur-sm">
             <i data-lucide="hourglass" class="w-6 h-6 animate-pulse"></i>
             <span id="timerDisplay">45:00</span>
         </div>
     </header>
 
-    <!-- PANTALLA DE INICIO -->
-    <div id="introStage" class="w-full max-w-3xl flex flex-col items-center text-center mt-6 md:mt-12 space-y-8 fade-in">
-        <h1 class="text-5xl md:text-6xl text-amber-400 tracking-widest uppercase text-shadow-sm">Mysterium<br><span class="text-3xl md:text-4xl text-slate-300 mt-2 block">in Athenis</span></h1>
+    <div id="introStage" class="w-full max-w-3xl flex flex-col items-center text-center mt-6 md:mt-12 space-y-8 fade-in relative z-10">
+        <h1 class="text-5xl md:text-6xl text-amber-400 tracking-widest uppercase text-shadow-sm drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">Mysterium<br><span class="text-3xl md:text-4xl text-slate-300 mt-2 block">in Athenis</span></h1>
         
-        <div class="bg-slate-800/80 p-8 md:p-12 rounded-lg border border-slate-700 shadow-2xl backdrop-blur-sm w-full max-w-2xl relative">
-            
+        <div class="bg-slate-900/80 p-8 md:p-12 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md w-full max-w-2xl relative overflow-hidden">
             <div class="mb-8 text-center">
-                <button onclick="openVideo()" class="px-6 py-3 bg-slate-900 hover:bg-slate-700 text-slate-300 font-cinzel rounded-full border border-slate-600 transition flex items-center gap-3 mx-auto uppercase text-sm tracking-widest shadow-lg hover:border-amber-500 hover:text-amber-400">
+                <button onclick="openVideo()" class="px-6 py-3 bg-slate-950 hover:bg-slate-800 text-slate-300 font-cinzel rounded-full border border-slate-700 transition flex items-center gap-3 mx-auto uppercase text-sm tracking-widest shadow-lg hover:border-amber-500 hover:text-amber-400">
                     <i data-lucide="play-circle" class="w-5 h-5 text-amber-500"></i> Ver Mensaje del Senado
                 </button>
             </div>
@@ -134,30 +150,28 @@
                 <span class="text-4xl text-amber-500 font-cinzel float-left mr-2 leading-none">S</span>ois un equipo de investigadores de lo paranormal en la antigua Roma. Habéis sido contratados por el senado para investigar una mansión en Atenas de la que nadie sale cuerdo. La única forma de apaciguar al espíritu que la habita y desbloquear la puerta de salida es descifrar sus últimos pasos. Tenéis 45 minutos antes de que la locura se apodere de vosotros. Vuestra única herramienta: la gramática latina.
             </p>
             
-            <div class="mb-10 bg-slate-900/60 p-6 rounded border border-slate-600 text-left">
+            <div class="mb-10 bg-slate-950/60 p-6 rounded-lg border border-slate-700 text-left">
                 <p class="text-amber-400 font-cinzel text-lg mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-5 h-5"></i> El Grimorio de Atenodoro</p>
                 <p class="text-sm text-slate-400 leading-relaxed">Incluye un diccionario interactivo absoluto. Haciendo clic sobre <strong>cualquier palabra</strong> del texto en latín, accederéis a su análisis morfológico completo con sus raíces y desinencias separadas por colores.</p>
             </div>
 
-            <button onclick="startGame()" class="px-10 py-5 bg-amber-600 hover:bg-amber-500 text-slate-900 font-cinzel font-bold text-xl rounded transition transform hover:scale-105 shadow-[0_0_20px_rgba(217,119,6,0.4)] w-full tracking-widest uppercase">
+            <button onclick="startGame()" class="px-10 py-5 bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-900 font-cinzel font-bold text-xl rounded transition transform hover:scale-105 shadow-[0_0_25px_rgba(217,119,6,0.4)] w-full tracking-[0.2em] uppercase border border-amber-400/50">
                 Entrar en la Mansión
             </button>
         </div>
     </div>
 
-    <!-- ESCENARIO PRINCIPAL DEL JUEGO -->
-    <div id="gameStage" class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 gap-8 hidden-stage relative z-10">
+    <div id="gameStage" class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-8 hidden-stage relative z-10">
         
-        <!-- Códice y Reto Magistral -->
         <div class="lg:col-span-2 flex flex-col h-full gap-6">
-            <div class="pergamino p-6 md:p-8 rounded-lg relative sticky top-6">
-                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-amber-900/20 rounded-full"></div>
-                <h2 class="text-2xl font-cinzel text-center border-b-2 border-amber-900/20 pb-4 mb-6 mt-2 font-bold uppercase text-amber-800">Códice de Atenodoro</h2>
-                <div id="latin-container" class="text-lg leading-loose text-justify font-medium text-slate-900">
+            <div class="pergamino p-8 md:p-10 rounded-xl relative sticky top-6">
+                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-amber-900/20 rounded-full"></div>
+                <h2 class="text-2xl font-cinzel text-center border-b-2 border-amber-900/20 pb-4 mb-6 mt-2 font-bold uppercase text-amber-800 tracking-widest">Códice de Atenodoro</h2>
+                <div id="latin-container" class="text-lg md:text-xl leading-loose text-justify font-medium text-slate-900">
                     <!-- Texto inyectado por JS -->
                 </div>
-                <div class="mt-8 pt-4 border-t border-amber-900/20 text-sm italic text-amber-900/70">
-                    <p class="mb-2 font-bold flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-4 h-4"></i> Haz clic en cualquier palabra para consultar el Oráculo.</p>
+                <div class="mt-8 pt-6 border-t border-amber-900/20 text-sm italic text-amber-900/70">
+                    <p class="mb-2 font-bold flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-4 h-4"></i> Clic en cualquier palabra para consultar el Oráculo.</p>
                     <ul class="list-disc pl-5 space-y-1 mt-4">
                         <li><strong>macies -ei:</strong> extrema delgadez</li>
                         <li><strong>conduco:</strong> alquilar</li>
@@ -166,127 +180,128 @@
                 </div>
             </div>
 
-            <!-- Reto Magistral (Offline) -->
-            <div class="bg-slate-800 border border-slate-600 p-6 rounded-lg shadow-lg relative overflow-hidden">
+            <div class="bg-slate-900/80 border border-slate-700 p-6 rounded-xl shadow-lg relative overflow-hidden backdrop-blur-sm">
                 <h3 class="text-xl text-amber-400 mb-4 flex items-center gap-2 font-cinzel tracking-widest uppercase">
                     <i data-lucide="brain-circuit" class="w-5 h-5"></i> Reto Magistral
                 </h3>
-                <p class="text-sm text-slate-300 mb-4 font-serif">¿Necesitáis practicar antes de resolver el enigma? El Oráculo os pondrá a prueba.</p>
-                <button onclick="generateExercise()" class="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded font-cinzel text-sm uppercase tracking-widest transition-all border border-slate-500">Generar Reto</button>
+                <p class="text-sm text-slate-300 mb-4 font-serif">¿Necesitáis practicar antes de resolver los enigmas? El Oráculo os pondrá a prueba.</p>
+                <button onclick="generateExercise()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-amber-100 rounded font-cinzel text-sm uppercase tracking-widest transition-all border border-slate-600 shadow-md">Generar Reto</button>
                 <div id="exercise-area" class="hidden mt-6 pt-6 border-t border-slate-700"></div>
             </div>
         </div>
 
-        <!-- Pruebas de Escape -->
-        <div class="lg:col-span-3 flex flex-col space-y-6 pb-20">
+        <div class="lg:col-span-3 flex flex-col space-y-8 pb-20">
             
-            <!-- PRUEBA 1 -->
-            <div id="prueba1" class="bg-slate-800 border border-slate-600 p-8 rounded-lg shadow-xl relative overflow-hidden transition-all duration-500 fade-in">
-                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                <h3 class="text-2xl text-blue-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
-                    <span class="bg-blue-900/50 w-8 h-8 flex items-center justify-center rounded border border-blue-700">I</span> El Ojo de Minerva
+            <div id="prueba1" class="bg-slate-900/80 border border-slate-700 p-8 md:p-10 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500 fade-in backdrop-blur-sm">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+                <h3 class="text-3xl text-blue-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
+                    <span class="bg-blue-950/50 w-10 h-10 flex items-center justify-center rounded border border-blue-800">I</span> El Ojo de Minerva
                 </h3>
-                <p class="mb-8 text-slate-300 font-serif">Para poder "ver" al fantasma, debéis diseccionar la magia que lo oculta identificando tres estructuras en el texto. Escribid la <span class="text-blue-400 font-bold">palabra exacta</span> en latín.</p>
+                <p class="mb-8 text-slate-300 font-serif text-lg">Para poder "ver" al fantasma, debéis diseccionar la magia que lo oculta identificando tres estructuras en el texto. Escribid la <span class="text-blue-400 font-bold">palabra exacta</span> en latín.</p>
                 
                 <div class="space-y-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                         <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">1. Verbo de la oración de CUM histórico:</label>
-                        <input type="text" id="p1-q1" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="verbo">
+                        <input type="text" id="p1-q1" class="input-latino w-full md:w-1/3 focus:border-blue-500" autocomplete="off" spellcheck="false" placeholder="verbo">
                     </div>
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                         <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">2. Participio de la construcción de Ablativo Absoluto:</label>
-                        <input type="text" id="p1-q2" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="participio">
+                        <input type="text" id="p1-q2" class="input-latino w-full md:w-1/3 focus:border-blue-500" autocomplete="off" spellcheck="false" placeholder="participio">
                     </div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
                         <label class="text-sm font-bold text-slate-400 w-full md:w-2/3">3. Participio concertado que acompaña a 'senex':</label>
-                        <input type="text" id="p1-q3" class="input-latino w-full md:w-1/3" autocomplete="off" spellcheck="false" placeholder="participio">
+                        <input type="text" id="p1-q3" class="input-latino w-full md:w-1/3 focus:border-blue-500" autocomplete="off" spellcheck="false" placeholder="participio">
                     </div>
                 </div>
                 <div class="mt-8">
-                    <button onclick="checkPrueba1()" class="w-full py-4 bg-blue-700 hover:bg-blue-600 text-white font-bold rounded font-cinzel tracking-widest uppercase transition shadow-[0_0_15px_rgba(29,78,216,0.4)] border border-blue-400/50">Revelar Sello</button>
+                    <button onclick="checkPrueba1()" class="w-full py-4 bg-blue-800 hover:bg-blue-700 text-white font-bold rounded font-cinzel tracking-widest uppercase transition shadow-[0_0_20px_rgba(30,64,175,0.6)] border border-blue-500/50">Revelar Sello</button>
                 </div>
             </div>
 
-            <!-- PRUEBA 2 -->
-            <div id="prueba2" class="bg-slate-800 border border-slate-600 p-8 rounded-lg shadow-xl relative overflow-hidden transition-all duration-500 hidden-stage">
-                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                <h3 class="text-2xl text-emerald-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
-                    <span class="bg-emerald-900/50 w-8 h-8 flex items-center justify-center rounded border border-emerald-700">II</span> La Voz del Más Allá
+            <div id="prueba2" class="bg-slate-900/80 border border-slate-700 p-8 md:p-10 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500 hidden-stage backdrop-blur-sm">
+                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
+                <h3 class="text-3xl text-emerald-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
+                    <span class="bg-emerald-950/50 w-10 h-10 flex items-center justify-center rounded border border-emerald-800">II</span> La Voz del Más Allá
                 </h3>
-                <p class="mb-8 text-slate-300 font-serif">El espectro intenta comunicarse. Seleccionad la traducción correcta para estos tres fragmentos clave del texto.</p>
+                <p class="mb-8 text-slate-300 font-serif text-lg">El espectro intenta comunicarse. Seleccionad la traducción correcta para estos fragmentos clave y reconstruid el final de la historia.</p>
                 
                 <div class="space-y-6">
-                    <div class="bg-slate-900/50 p-5 rounded border border-slate-700">
-                        <p class="font-cinzel text-amber-200 mb-4 text-lg">"Cum philosophus Athenodorus domum conduxisset..."</p>
+                    <div class="bg-slate-950/50 p-5 rounded-lg border border-slate-800">
+                        <p class="font-cinzel text-emerald-200 mb-4 text-lg">"Cum philosophus Athenodorus domum conduxisset..."</p>
                         <div class="space-y-3 pl-2">
                             <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t1" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">a) Cuando el filósofo alquilaba la casa</span></label>
                             <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t1" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">b) Como el filósofo hubiera alquilado la casa</span></label>
                             <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t1" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">c) Aunque el filósofo alquiló la casa</span></label>
                         </div>
                     </div>
-                    <div class="bg-slate-900/50 p-5 rounded border border-slate-700">
-                        <p class="font-cinzel text-amber-200 mb-4 text-lg">"...monstro evanescente..."</p>
-                        <div class="space-y-3 pl-2">
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t2" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">a) al desaparecer el monstruo</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t2" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">b) el monstruo desvanecido</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t2" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">c) para desvanecer al monstruo</span></label>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900/50 p-5 rounded border border-slate-700">
-                        <p class="font-cinzel text-amber-200 mb-4 text-lg">"...ossa vincta catenis."</p>
-                        <div class="space-y-3 pl-2">
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t3" value="a" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">a) las cadenas atan los huesos</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t3" value="b" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">b) unos huesos que atan cadenas</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer group"><input type="radio" name="t3" value="c" class="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 accent-emerald-500"><span class="group-hover:text-emerald-300 transition text-sm">c) unos huesos atados con cadenas</span></label>
-                        </div>
-                    </div>
                     
-                    <div class="bg-slate-900/50 p-5 rounded border border-slate-700 mt-4">
-                        <label for="fullTranslation" class="font-cinzel text-amber-200 mb-3 text-lg flex items-center gap-2">
-                            <i data-lucide="feather" class="w-5 h-5 text-amber-500"></i> Traducción Completa
+                    <div class="bg-slate-950/50 p-6 rounded-lg border border-slate-800 mt-4 relative z-10 shadow-inner">
+                        <label class="font-cinzel text-amber-400 mb-4 text-xl flex items-center gap-2 border-b border-slate-700 pb-2">
+                            <i data-lucide="feather" class="w-5 h-5 text-amber-500"></i> Traducción Final
                         </label>
-                        <p class="text-sm text-slate-400 mb-4">Redactad aquí la versión final en español de todo el texto. Es requisito indispensable para el Senado.</p>
-                        <textarea id="fullTranslation" class="w-full h-32 p-4 bg-slate-800 border border-slate-600 text-slate-200 rounded focus:border-emerald-500 focus:outline-none transition font-serif resize-none shadow-inner" placeholder="Había en Atenas una casa..."></textarea>
+                        <p class="text-sm text-slate-400 mb-6">Para sellar el conjuro, reconstruye el desenlace seleccionando las traducciones correctas en los huecos:</p>
+                        <div class="text-slate-300 leading-loose bg-slate-900 p-6 rounded border border-slate-700 font-serif text-lg">
+                            "En el patio de la casa, 
+                            <select id="trans1" class="custom-select bg-slate-800 border-b-2 border-slate-600 px-3 py-1 text-emerald-400 font-bold outline-none focus:border-emerald-400 transition-colors text-center cursor-pointer mx-1">
+                                <option value="">[...]</option>
+                                <option value="a">al aparecer el espíritu</option>
+                                <option value="b">al desaparecer el monstruo</option>
+                                <option value="c">con un ruido monstruoso</option>
+                            </select>, 
+                            Atenodoro 
+                            <select id="trans2" class="custom-select bg-slate-800 border-b-2 border-slate-600 px-3 py-1 text-emerald-400 font-bold outline-none focus:border-emerald-400 transition-colors text-center cursor-pointer mx-1 mt-2 md:mt-0">
+                                <option value="">[...]</option>
+                                <option value="a">enterró al anciano</option>
+                                <option value="b">encontró unos huesos</option>
+                                <option value="c">rompió las cadenas</option>
+                            </select> 
+                            que estaban 
+                            <select id="trans3" class="custom-select bg-slate-800 border-b-2 border-slate-600 px-3 py-1 text-emerald-400 font-bold outline-none focus:border-emerald-400 transition-colors text-center cursor-pointer mx-1 mt-2 lg:mt-0">
+                                <option value="">[...]</option>
+                                <option value="a">atados con cadenas</option>
+                                <option value="b">sueltos en la tierra</option>
+                                <option value="c">marcados con sangre</option>
+                            </select>."
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8">
-                    <button onclick="checkPrueba2()" class="w-full py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded font-cinzel tracking-widest uppercase transition shadow-[0_0_15px_rgba(4,120,87,0.4)] border border-emerald-400/50">Escuchar Mensaje</button>
+                    <button onclick="checkPrueba2()" class="w-full py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded font-cinzel tracking-widest uppercase transition shadow-[0_0_20px_rgba(4,120,87,0.6)] border border-emerald-500/50">Escuchar Mensaje</button>
                 </div>
             </div>
 
-            <!-- PRUEBA 3 -->
-            <div id="prueba3" class="bg-slate-800 border border-slate-600 p-8 rounded-lg shadow-xl relative overflow-hidden transition-all duration-500 hidden-stage">
-                <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-                <h3 class="text-2xl text-red-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
-                    <span class="bg-red-900/50 w-8 h-8 flex items-center justify-center rounded border border-red-700">III</span> El Código de Caronte
+            <div id="prueba3" class="bg-slate-900/80 border border-slate-700 p-8 md:p-10 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500 hidden-stage backdrop-blur-sm">
+                <div class="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]"></div>
+                <h3 class="text-3xl text-red-400 mb-4 flex items-center gap-3 font-cinzel tracking-widest uppercase">
+                    <span class="bg-red-950/50 w-10 h-10 flex items-center justify-center rounded border border-red-800">III</span> El Código de Caronte
                 </h3>
-                <p class="mb-8 text-slate-300 font-serif">La puerta final tiene un mecanismo de bronce. Resolved los <span class="text-red-400 font-bold">cinco enigmas</span> para obtener la combinación de 5 dígitos.</p>
+                <p class="mb-8 text-slate-300 font-serif text-lg">La pesada puerta final de la mansión tiene un mecanismo de bronce. Resolved los <span class="text-red-400 font-bold">cinco enigmas</span> para obtener la combinación de apertura.</p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
-                    <div class="bg-slate-900 p-4 rounded-lg text-center border border-slate-700 flex flex-col items-center justify-between shadow-inner">
+                    <div class="bg-slate-950/80 p-4 rounded-lg text-center border border-slate-800 flex flex-col items-center justify-between shadow-inner">
                         <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">Nº de verbos en modo <strong>subjuntivo</strong>.</p>
                         <input type="number" id="lock1" min="0" max="9" class="candado-input">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded-lg text-center border border-slate-700 flex flex-col items-center justify-between shadow-inner">
-                        <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">Declinación del sustantivo <strong>noctis</strong>.</p>
+                    <div class="bg-slate-950/80 p-4 rounded-lg text-center border border-slate-800 flex flex-col items-center justify-between shadow-inner">
+                        <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">Declinación (Nº) del sustantivo <strong>noctis</strong>.</p>
                         <input type="number" id="lock2" min="1" max="5" class="candado-input">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded-lg text-center border border-slate-700 flex flex-col items-center justify-between shadow-inner">
+                    <div class="bg-slate-950/80 p-4 rounded-lg text-center border border-slate-800 flex flex-col items-center justify-between shadow-inner">
                         <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">Orden de caso (1-6) de <strong>catenis</strong>.</p>
                         <input type="number" id="lock3" min="1" max="6" class="candado-input">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded-lg text-center border border-slate-700 flex flex-col items-center justify-between shadow-inner">
+                    <div class="bg-slate-950/80 p-4 rounded-lg text-center border border-slate-800 flex flex-col items-center justify-between shadow-inner">
                         <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">¿Género literario? <br><span class="text-[9px]">(1:Épica, 2:Teatro, 3:Lírica, 4:Epist.)</span></p>
                         <input type="number" id="lock4" min="1" max="5" class="candado-input">
                     </div>
-                    <div class="bg-slate-900 p-4 rounded-lg text-center border border-slate-700 flex flex-col items-center justify-between shadow-inner">
+                    <div class="bg-slate-950/80 p-4 rounded-lg text-center border border-slate-800 flex flex-col items-center justify-between shadow-inner">
                         <p class="text-[11px] md:text-xs text-slate-400 mb-4 h-12 flex items-center justify-center">Nº de helenismos en: <em>philosophus, phantasma, domus, senex</em>.</p>
                         <input type="number" id="lock5" min="0" max="4" class="candado-input">
                     </div>
                 </div>
 
                 <div class="mt-4 w-full">
-                    <button onclick="checkPrueba3()" class="w-full py-5 bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white font-cinzel font-bold text-xl rounded transition-all shadow-[0_0_20px_rgba(239,68,68,0.5)] border border-red-500/50 uppercase tracking-[0.2em] hover:scale-105">
+                    <button onclick="checkPrueba3()" class="w-full py-5 bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white font-cinzel font-bold text-xl md:text-2xl rounded transition-all shadow-[0_0_30px_rgba(239,68,68,0.6)] border border-red-500/50 uppercase tracking-[0.2em] hover:scale-105">
                         Desbloquear Puerta
                     </button>
                 </div>
@@ -295,63 +310,58 @@
         </div>
     </div>
 
-    <!-- PANTALLA DE VICTORIA -->
     <div id="victoryStage" class="w-full max-w-4xl flex flex-col items-center text-center mt-12 space-y-6 hidden-stage fade-in relative z-10">
         <h1 class="text-5xl md:text-7xl font-cinzel text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)] mb-4 uppercase tracking-widest">¡Habéis Escapado!</h1>
         <div class="text-8xl mb-6">🏛️☀️</div>
         
-        <div class="bg-slate-900/90 p-8 md:p-12 rounded-xl border border-amber-500/50 shadow-[0_0_40px_rgba(217,119,6,0.2)] relative max-w-2xl w-full">
+        <div class="bg-slate-900/90 p-8 md:p-12 rounded-xl border border-amber-500/50 shadow-[0_0_40px_rgba(217,119,6,0.2)] relative max-w-2xl w-full backdrop-blur-md">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
             
-            <p class="text-xl md:text-2xl text-slate-300 leading-relaxed font-serif mb-8">
+            <p class="text-xl md:text-2xl text-slate-200 leading-relaxed font-serif mb-8">
                 La pesada puerta de bronce cede y se abre, dejando entrar la luz del amanecer ateniense. El espíritu de la casa ha encontrado la paz gracias a vuestra magistral comprensión del latín.
             </p>
             
-            <div class="inline-block bg-amber-950/50 p-6 rounded-lg border border-amber-800 text-amber-300 font-cinzel text-xl uppercase tracking-widest mb-8">
+            <div class="inline-block bg-amber-950/50 p-6 rounded-lg border border-amber-800 text-amber-300 font-cinzel text-xl uppercase tracking-widest mb-8 shadow-inner">
                 Sobreviviste a la oscuridad
             </div>
 
-            <div class="grid grid-cols-2 gap-4 bg-slate-800 p-4 rounded border border-slate-700 shadow-inner max-w-md mx-auto">
+            <div class="grid grid-cols-2 gap-4 bg-slate-950/80 p-4 rounded-lg border border-slate-700 shadow-inner max-w-md mx-auto">
                 <div class="flex flex-col items-center justify-center p-2">
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1 text-center">Tiempo Sobrante</p>
-                    <p id="finalTime" class="text-3xl text-emerald-400 font-bold font-cinzel"></p>
+                    <p id="finalTime" class="text-3xl text-emerald-400 font-bold font-cinzel drop-shadow-md"></p>
                 </div>
                 <div class="flex flex-col items-center justify-center p-2 border-l border-slate-700">
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1 text-center">Intentos Fallidos</p>
-                    <p id="finalMistakes" class="text-3xl text-red-400 font-bold font-cinzel"></p>
+                    <p id="finalMistakes" class="text-3xl text-red-400 font-bold font-cinzel drop-shadow-md"></p>
                 </div>
             </div>
             
-            <button onclick="location.reload()" class="mt-8 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded font-cinzel uppercase text-sm transition block mx-auto">Volver al Senado</button>
+            <button onclick="location.reload()" class="mt-10 px-8 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-full font-cinzel uppercase text-sm transition shadow-lg block mx-auto tracking-widest">Volver al Senado</button>
         </div>
     </div>
 
-    <!-- PANTALLA DE DERROTA -->
-    <div id="defeatStage" class="w-full max-w-4xl flex flex-col items-center text-center mt-20 space-y-6 hidden-stage fade-in">
-        <h1 class="text-5xl md:text-7xl font-cinzel text-red-600 text-shadow-sm mb-4">La Locura os Domina</h1>
+    <div id="defeatStage" class="w-full max-w-4xl flex flex-col items-center text-center mt-20 space-y-6 hidden-stage fade-in relative z-10">
+        <h1 class="text-5xl md:text-7xl font-cinzel text-red-600 text-shadow-sm mb-4 drop-shadow-[0_0_20px_rgba(220,38,38,0.5)]">La Locura os Domina</h1>
         <div class="text-8xl mb-4">💀</div>
-        <p class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-2xl font-serif">
+        <p class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-2xl font-serif bg-black/50 p-6 rounded-lg backdrop-blur-sm border border-red-900/50">
             El tiempo se ha agotado. La oscuridad os rodea por completo. El sonido de las cadenas es lo último que escucháis antes de quedar atrapados para siempre en la mansión de Atenodoro.
         </p>
-        <button onclick="location.reload()" class="mt-8 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded font-cinzel uppercase text-sm transition">Intentarlo de Nuevo</button>
+        <button onclick="location.reload()" class="mt-8 px-8 py-3 bg-red-900/50 hover:bg-red-800/80 text-red-200 border border-red-700/50 rounded-full font-cinzel uppercase text-sm transition shadow-lg tracking-widest">Intentarlo de Nuevo</button>
     </div>
 
-    <!-- DRAWER DEL ORÁCULO -->
     <div id="oracle-drawer" class="fixed inset-y-0 right-0 w-full md:w-[500px] lg:w-[600px] bg-slate-900 shadow-[-20px_0_50px_rgba(0,0,0,0.8)] translate-x-full drawer p-8 md:p-10 overflow-y-auto border-l border-slate-700 z-[400] text-slate-200">
-        <button onclick="closeOracle()" class="mb-8 text-slate-400 hover:text-amber-500 flex items-center gap-3 font-cinzel text-sm uppercase transition-all tracking-widest font-bold bg-slate-800 px-4 py-2 rounded-full border border-slate-600 w-max">
+        <button onclick="closeOracle()" class="mb-8 text-slate-400 hover:text-amber-500 flex items-center gap-3 font-cinzel text-sm uppercase transition-all tracking-widest font-bold bg-slate-800 px-4 py-2 rounded-full border border-slate-600 w-max shadow-md">
             <i data-lucide="chevron-right" class="w-5 h-5"></i> Cerrar Grimorio
         </button>
         <div id="oracle-content"></div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
     <script>
         let currentStage = 1;
         let timerInterval;
         let timeRemaining = 45 * 60; // 45 minutos
         let mistakes = 0;
         
-        // CORRECCIÓN: Definimos el texto en latín explícitamente aquí arriba para evitar el ReferenceError
         const latinText = "Erat Athenis magna domus, sed infamis. Per silentium noctis sonus ferri et strepitus vinculorum audiebantur. Mox apparebat idolum, senex macie confectus. Cum philosophus Athenodorus domum conduxisset, in tenebris vigilabat. Subito phantasma advenit et digito signum dedit. In area domus, monstro evanescente, Athenodorus ossa vincta catenis invenit.";
 
         window.onload = function() {
@@ -364,10 +374,8 @@
                 return `<span class="word-token" onclick="analyze('${cleanWord}')">${word}</span>`;
             }).join(' ');
             
-            // Iniciar progreso si existe la función
-            if (typeof checkGameState === 'function') {
-                checkGameState();
-            }
+            // Reset automático si se recarga la página
+            localStorage.removeItem('mysterium_status');
         };
 
         function show(id) { document.getElementById(id).classList.remove('hidden-stage'); }
@@ -452,7 +460,7 @@
             show('victoryStage');
         }
 
-        // --- SISTEMA DE PROGRESIÓN (UNLOCK) ---
+        // --- SISTEMA DE PROGRESIÓN (UNLOCK LINEAL) ---
         function unlockLevel(from, to) {
             const currentPrueba = document.getElementById(`prueba${from}`);
             const nextPrueba = document.getElementById(`prueba${to}`);
@@ -483,28 +491,24 @@
             const q3 = normalizeString(document.getElementById('p1-q3').value);
 
             if (q1 === 'conduxisset' && q2 === 'evanescente' && q3 === 'confectus') {
-                document.getElementById('p1-error').classList.add('hidden');
                 unlockLevel(1, 2);
             } else {
                 mistakes++;
-                document.getElementById('p1-error').classList.remove('hidden');
-                setTimeout(() => document.getElementById('p1-error').classList.add('hidden'), 3000);
+                showToast("Fuerzas místicas rechazan tu respuesta. Revisa la ortografía.", "error");
             }
         }
 
         function checkPrueba2() {
             const q1 = document.querySelector('input[name="t1"]:checked')?.value;
-            const q2 = document.querySelector('input[name="t2"]:checked')?.value;
-            const q3 = document.querySelector('input[name="t3"]:checked')?.value;
-            const trans = document.getElementById('fullTranslation').value.trim();
+            const t1 = document.getElementById('trans1').value;
+            const t2 = document.getElementById('trans2').value;
+            const t3 = document.getElementById('trans3').value;
 
-            if (q1 === 'b' && q2 === 'a' && q3 === 'c' && trans.length > 20) {
-                document.getElementById('p2-error').classList.add('hidden');
+            if (q1 === 'b' && t1 === 'b' && t2 === 'b' && t3 === 'a') {
                 unlockLevel(2, 3);
             } else {
                 mistakes++;
-                document.getElementById('p2-error').classList.remove('hidden');
-                setTimeout(() => document.getElementById('p2-error').classList.add('hidden'), 3000);
+                showToast("El espectro no reconoce sus propias palabras. Revisa los fragmentos.", "error");
             }
         }
 
@@ -519,7 +523,7 @@
                 victory();
             } else {
                 mistakes++;
-                document.getElementById('p3-error').classList.remove('hidden');
+                showToast("El mecanismo de bronce se atasca. Código incorrecto.", "error");
                 const inputs = document.querySelectorAll('.candado-input');
                 inputs.forEach(i => {
                     i.classList.add('border-red-500', 'text-red-500', 'bg-red-900/20');
@@ -546,7 +550,7 @@
                 pregunta: "¿Qué tipo de construcción gramatical forma 'monstro evanescente'?",
                 opciones: ["Acusativo de extensión", "Ablativo absoluto", "Dativo posesivo"],
                 correcta: 1,
-                explicacion: "Es una construcción típica de ablativo absoluto, formada por un sustantivo y un participio en ablativo, que funciona como oración subordinada circunstancial ('al desaparecer el monstruo')."
+                explicacion: "Es una construcción de ablativo absoluto, formada por un sustantivo y un participio en ablativo, que equivale a 'al desaparecer el monstruo'."
             }
         ];
 
@@ -561,7 +565,7 @@
                 <h4 class="font-cinzel text-[11px] text-slate-400 mb-4 uppercase border-b border-slate-700 pb-2 tracking-widest">Examen Magistral</h4>
                 <p class="mb-6 font-serif text-lg text-slate-200 leading-snug">${ex.pregunta}</p>
                 <div class="space-y-3">
-                    ${ex.opciones.map((o, i) => `<button onclick="checkAns(${i}, ${ex.correcta}, '${ex.explicacion.replace(/'/g, "\\'")}')" class="block w-full text-left p-3 bg-slate-900 rounded border border-slate-700 transition-all hover:bg-slate-700 text-slate-300 text-sm shadow-sm">${o}</button>`).join('')}
+                    ${ex.opciones.map((o, i) => `<button onclick="checkAns(${i}, ${ex.correcta}, '${ex.explicacion.replace(/'/g, "\\'")}')" class="block w-full text-left p-3 bg-slate-900/80 rounded border border-slate-700 transition-all hover:bg-slate-700 hover:border-amber-500 text-slate-300 text-sm shadow-sm">${o}</button>`).join('')}
                 </div>
                 <div id="fb" class="mt-6 text-sm italic font-serif text-slate-400"></div>`;
         }
@@ -571,45 +575,43 @@
             fb.innerHTML = i === c ? `✅ <span class="text-emerald-400 font-bold uppercase font-cinzel">¡Sapiens!</span><br><br>${e}` : `❌ <span class="text-red-400 font-bold uppercase font-cinzel">Erratum.</span><br><br>${e}`; 
         }
 
-
-        // --- DICCIONARIO DEL ORÁCULO ---
         function formatWord(w) {
-            if (!w || w === '-') return '<td class="border border-slate-700 p-2 text-slate-600">-</td>';
+            if (!w || w === '-') return '<td class="border-r border-slate-700/50 p-2 text-slate-600 text-center">-</td>';
             const p = w.split('|');
-            if (p.length === 1) return `<td class="border border-slate-700 p-2 text-slate-300">${w}</td>`;
+            if (p.length === 1) return `<td class="border-r border-slate-700/50 p-2 text-slate-300 text-center">${w}</td>`;
             // Raíz en gris claro, Desinencia en ROJO
-            return `<td class="border border-slate-700 p-2 font-mono"><span class="text-slate-300">${p[0]}</span><span class="text-red-400 font-bold bg-red-900/30 px-1 rounded ml-[1px]">${p[1]}</span></td>`;
+            return `<td class="border-r border-slate-700/50 p-2 font-mono text-center"><span class="text-slate-300">${p[0]}</span><span class="text-red-500 font-bold bg-red-900/30 px-1 rounded ml-[1px]">${p[1]}</span></td>`;
         }
 
         function buildNounTable(nomS, vocS, accS, genS, datS, ablS, nomP, vocP, accP, genP, datP, ablP) {
-            return `<div class="overflow-x-auto pb-4"><table class="w-full text-xs md:text-sm text-left text-slate-200 border-collapse mt-6 shadow-2xl rounded-lg overflow-hidden bg-slate-900 border border-slate-700">
-                <thead class="bg-slate-800 text-amber-400">
+            return `<div class="overflow-x-auto pb-4"><table class="w-full text-xs md:text-sm text-left text-slate-200 border-collapse mt-6 shadow-2xl rounded-lg overflow-hidden bg-slate-900/80 border border-slate-700">
+                <thead class="bg-gradient-to-r from-slate-900 to-slate-800 text-amber-400">
                     <tr><th class="border-b border-slate-700 p-3 text-center font-cinzel tracking-widest uppercase" colspan="3"><i data-lucide="book-open" class="inline w-4 h-4 mr-2"></i> Flexión Nominal</th></tr>
-                    <tr class="text-slate-400 bg-slate-900"><th class="border border-slate-700 p-2 font-bold">Caso</th><th class="border border-slate-700 p-2 font-bold">Singular</th><th class="border border-slate-700 p-2 font-bold">Plural</th></tr>
+                    <tr class="text-slate-400 bg-slate-950/50"><th class="border-r border-b border-slate-700 p-2 font-bold text-center">Caso</th><th class="border-r border-b border-slate-700 p-2 font-bold text-center">Singular</th><th class="border-b border-slate-700 p-2 font-bold text-center">Plural</th></tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Nominativo</td>${formatWord(nomS)}${formatWord(nomP)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Vocativo</td>${formatWord(vocS)}${formatWord(vocP)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Acusativo</td>${formatWord(accS)}${formatWord(accP)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Genitivo</td>${formatWord(genS)}${formatWord(genP)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Dativo</td>${formatWord(datS)}${formatWord(datP)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">Ablativo</td>${formatWord(ablS)}${formatWord(ablP)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Nominativo</td>${formatWord(nomS)}${formatWord(nomP)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Vocativo</td>${formatWord(vocS)}${formatWord(vocP)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Acusativo</td>${formatWord(accS)}${formatWord(accP)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Genitivo</td>${formatWord(genS)}${formatWord(genP)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Dativo</td>${formatWord(datS)}${formatWord(datP)}</tr>
+                    <tr class="hover:bg-slate-800 transition"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">Ablativo</td>${formatWord(ablS)}${formatWord(ablP)}</tr>
                 </tbody>
             </table></div>`;
         }
 
         function buildVerbTable(p1, p2, p3, p4, p5, p6, title) {
-            return `<div class="overflow-x-auto pb-4"><table class="w-full text-xs md:text-sm text-left text-slate-200 border-collapse mt-6 shadow-2xl rounded-lg overflow-hidden bg-slate-900 border border-slate-700">
-                <thead class="bg-slate-800 text-amber-400">
+            return `<div class="overflow-x-auto pb-4"><table class="w-full text-xs md:text-sm text-left text-slate-200 border-collapse mt-6 shadow-2xl rounded-lg overflow-hidden bg-slate-900/80 border border-slate-700">
+                <thead class="bg-gradient-to-r from-slate-900 to-slate-800 text-amber-400">
                     <tr><th colspan="2" class="border-b border-slate-700 p-3 text-center font-cinzel uppercase tracking-widest"><i data-lucide="flame" class="inline w-4 h-4 mr-2"></i> ${title}</th></tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider w-1/3">1ª Singular</td>${formatWord(p1)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">2ª Singular</td>${formatWord(p2)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">3ª Singular</td>${formatWord(p3)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">1ª Plural</td>${formatWord(p4)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">2ª Plural</td>${formatWord(p5)}</tr>
-                    <tr class="hover:bg-slate-800 transition"><td class="border border-slate-700 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider">3ª Plural</td>${formatWord(p6)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider w-1/3 text-center">1ª Singular</td>${formatWord(p1)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">2ª Singular</td>${formatWord(p2)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">3ª Singular</td>${formatWord(p3)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">1ª Plural</td>${formatWord(p4)}</tr>
+                    <tr class="hover:bg-slate-800 transition border-b border-slate-800/50"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">2ª Plural</td>${formatWord(p5)}</tr>
+                    <tr class="hover:bg-slate-800 transition"><td class="border-r border-slate-700/50 p-2 font-bold text-amber-500/70 uppercase text-[10px] tracking-wider text-center">3ª Plural</td>${formatWord(p6)}</tr>
                 </tbody>
             </table></div>`;
         }
@@ -620,8 +622,6 @@
                 <p class="text-xs text-slate-400">Esta palabra carece de desinencias flexivas o se presenta en su forma base invariable.</p>
             </div>`;
         }
-
-        const latinTextData = "Erat Athenis magna domus, sed infamis. Per silentium noctis sonus ferri et strepitus vinculorum audiebantur. Mox apparebat idolum, senex macie confectus. Cum philosophus Athenodorus domum conduxisset, in tenebris vigilabat. Subito phantasma advenit et digito signum dedit. In area domus, monstro evanescente, Athenodorus ossa vincta catenis invenit.";
 
         const customDict = {
             // Invariables
